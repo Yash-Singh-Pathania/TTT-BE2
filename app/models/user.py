@@ -1,35 +1,32 @@
-import uuid as uuid_pkg
-from datetime import datetime, timezone
+from tortoise.models import Model
+from tortoise import fields
 from enum import Enum
+from typing import Optional
 
-from sqlalchemy import DateTime, Enum as SQLAlchemyEnum, ForeignKey, String
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.ext.declarative import declarative_base
-
-Base = declarative_base()
-
-class UserRole(Enum):
+class UserRole(str, Enum):
     SUPER_ADMIN = "super_admin"
     ORG_HEAD = "org_head"
     PLAYER = "player"
 
-class User(Base):
-    __tablename__ = "user"
+class User(Model):
+    id = fields.IntField(pk=True, unique=True)
+    first_name = fields.CharField(max_length=30)
+    last_name = fields.CharField(max_length=30)
+    email = fields.CharField(max_length=50, unique=True, index=True)
+    username = fields.CharField(max_length=20, unique=True, index=True)
+    hashed_password = fields.CharField(max_length=255)  # You can adjust the length based on the hash length
+    role = fields.CharEnumField(UserRole)
+    organization_id = fields.IntField(index=True)
 
-    id: Mapped[int] = mapped_column("id", autoincrement=True, nullable=False, unique=True, primary_key=True, init=False)
-    first_name: Mapped[str] = mapped_column(String(30), nullable=False)
-    last_name: Mapped[str] = mapped_column(String(30), nullable=False)
-    email: Mapped[str] = mapped_column(String(50), unique=True, nullable=False, index=True)
-    username: Mapped[str] = mapped_column(String(20), unique=True, nullable=False, index=True)
-    hashed_password: Mapped[str] = mapped_column(String, nullable=False)
-    role: Mapped[UserRole] = mapped_column(SQLAlchemyEnum(UserRole), nullable=False)
-    organization_id: Mapped[int] = mapped_column(ForeignKey("organization.id"), nullable=False, index=True)
+    created_at = fields.DatetimeField(auto_now_add=True, null=False)
+    updated_at = fields.DatetimeField(auto_now=True, null=True)
+    deleted_at = fields.DatetimeField(null=True)
+    is_deleted = fields.BooleanField(default=False, index=True)
 
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
-    updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None, onupdate=lambda: datetime.now(timezone.utc))
-    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
-    is_deleted: Mapped[bool] = mapped_column(default=False, index=True)
+    class Meta:
+        table = "users"
 
     def __repr__(self):
-        return f"<User(id={self.id}, first_name={self.first_name}, last_name={self.last_name}, email={self.email}, username={self.username}, role={self.role}, organization_id={self.organization_id})>"
-
+        return (f"<User(id={self.id}, first_name={self.first_name}, last_name={self.last_name}, "
+                f"email={self.email}, username={self.username}, role={self.role}, "
+                f"organization_id={self.organization_id})>")
