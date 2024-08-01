@@ -1,6 +1,6 @@
 # app/schemas/user.py
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, root_validator, ValidationError , Field
 from typing import Optional
 from enum import Enum
 from datetime import datetime
@@ -16,8 +16,21 @@ class UserBase(BaseModel):
     email: EmailStr
     username: str = Field(..., max_length=20)
     hashed_password: str = Field(..., max_length=255)
+    password: str = Field(..., max_length=255)
     role: UserRole
-    organization_id: int
+    organization: Optional[int] = None
+    organization_name: Optional[str] = None 
+    organization_id: Optional[int] = None
+
+    @root_validator(pre=True)
+    def check_organization(cls, values):
+        organization_id = values.get('organization_id')
+        organization_name = values.get('organization_name')
+
+        if not organization_id and not organization_name:
+            raise ValueError('Either organization_id or organization_name must be provided.')
+
+        return values
 
 class UserCreate(UserBase):
     pass

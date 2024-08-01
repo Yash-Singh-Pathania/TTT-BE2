@@ -16,7 +16,7 @@ class User(Model):
     username = fields.CharField(max_length=20, unique=True, index=True)
     hashed_password = fields.CharField(max_length=255)  # You can adjust the length based on the hash length
     role = fields.CharEnumField(UserRole)
-    organization_id = fields.IntField(index=True)
+    organization = fields.ForeignKeyField("models.Organization", related_name="users", on_delete=fields.CASCADE, index=True)
 
     created_at = fields.DatetimeField(auto_now_add=True, null=False)
     updated_at = fields.DatetimeField(auto_now=True, null=True)
