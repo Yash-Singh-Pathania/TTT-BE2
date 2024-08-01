@@ -1,5 +1,4 @@
 from pydantic import BaseModel, EmailStr, root_validator, ValidationError , Field
-from app.schemas.base import ResponseData, ResponseBase
 from typing import Optional
 from enum import Enum
 from datetime import datetime
