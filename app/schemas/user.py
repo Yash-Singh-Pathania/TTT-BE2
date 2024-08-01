@@ -30,8 +30,16 @@ class UserBase(BaseModel):
 
         return values
 
-class UserCreate(UserBase):
-    pass
+class UserCreate(BaseModel):
+    first_name: str = Field(..., max_length=30)
+    last_name: str = Field(..., max_length=30)
+    email: EmailStr
+    username: str = Field(..., max_length=20)
+    password: str = Field(..., max_length=255)
+    role: UserRole = UserRole.PLAYER
+    organization: Optional[int] = None
+    organization_name: Optional[str] = None 
+    organization_id: Optional[int] = None
 
 class UserUpdate(UserBase):
     deleted_at: Optional[datetime] = None

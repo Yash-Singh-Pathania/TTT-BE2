@@ -9,10 +9,8 @@ class OrganizationCreate(BaseModel):
 class OrganizationInDB(BaseModel):
     id: int
     name: str
-    created_at: datetime
-    updated_at: datetime
 
     class Config:
         orm_mode = True
 
-OrganizationInDB = pydantic_model_creator(Organization, name="OrganizationInDB", include=("id", "name", "created_at", "updated_at"))
+OrganizationInDB = pydantic_model_creator(Organization, name="OrganizationInDB", include=("id", "name"))
