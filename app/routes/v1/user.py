@@ -2,15 +2,22 @@
 
 from fastapi import APIRouter, HTTPException
 from app.models.user import User
-from app.schemas.user import UserCreate, UserUpdate, UserInDB
+from app.schemas.user import UserCreate, UserResponse, UserInDB, UserUpdate
+from app.schemas.base import ResponseData
 from app.services.user.creator.user_creator import UserCreator
 
 router = APIRouter()
 
-@router.post("/signup/")
+@router.post("/signup/", response_model=UserResponse)
 async def create_user(user: UserCreate):
-    user_obj = await UserCreator.create_user(user)
-    return user_obj
+    await UserCreator.create_user(user)
+    return UserResponse(
+        data=ResponseData(
+            message=["User Created Successfully"],
+            error_message=[]
+        ),
+        status_code=200
+    )
 
 @router.get("/users/{user_id}", response_model=UserInDB)
 async def read_user(user_id: int):
