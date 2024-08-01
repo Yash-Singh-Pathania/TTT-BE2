@@ -22,6 +22,7 @@ class UserCreator:
             if user_create.organization_name:
                 organization = await Organization.filter(name=user_create.organization_name).first()
                 if not organization:
+                    print("reached here")
                     organization = await Organization.create(name=user_create.organization_name)
                 organization_id = organization.id
             else:

@@ -1,5 +1,3 @@
-# app/schemas/user.py
-
 from pydantic import BaseModel, EmailStr, root_validator, ValidationError , Field
 from typing import Optional
 from enum import Enum

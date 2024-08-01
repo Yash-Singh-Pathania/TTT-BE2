@@ -7,13 +7,10 @@ from app.services.user.creator.user_creator import UserCreator
 
 router = APIRouter()
 
-@router.post("/signup/", response_model=UserInDB)
+@router.post("/signup/")
 async def create_user(user: UserCreate):
-    try:
-        user_obj = await UserCreator.create_user(user)
-        return await UserInDB.from_tortoise_orm(user_obj)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    user_obj = await UserCreator.create_user(user)
+    return user_obj
 
 @router.get("/users/{user_id}", response_model=UserInDB)
 async def read_user(user_id: int):
